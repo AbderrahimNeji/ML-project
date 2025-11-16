@@ -1,4 +1,5 @@
 name: CI
+
 on:
   push:
     branches: [main, master]
@@ -20,35 +21,33 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run flake8 linter
         run: |
-          source .venv/bin/activate
           flake8 src/ tests/
 
-      - name: Run tests
+      - name: Run tests with pytest
         run: |
-          source .venv/bin/activate
-          pytest --junitxml=test_report.xml
+          pytest tests/ --junitxml=test-results.xml
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: junit-test-report
-          path: test_report.xml
+          name: test-results
+          path: test-results.xml
 
       - name: Build Docker image
         run: |
           docker build -t ml-app:${{ github.sha }} .
 
-      - name: Save Docker image as artifact
+      - name: Save Docker image
         run: |
           docker save ml-app:${{ github.sha }} -o ml-app-image.tar
 
-      - name: Upload Docker image
+      - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
         with:
           name: docker-image
