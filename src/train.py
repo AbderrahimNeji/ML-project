@@ -3,12 +3,15 @@
 Training script for Iris classifier
 """
 
-import sys
-import os
+try:
+    from src.data_loader import get_feature_names, load_iris_data
+    from src.model import IrisClassifier
+    from src.utils import plot_confusion_matrix, plot_feature_importance
+except ImportError:  # `python src/train.py` puts src/ on sys.path
+    from data_loader import get_feature_names, load_iris_data
+    from model import IrisClassifier
+    from utils import plot_confusion_matrix, plot_feature_importance
 
-from data_loader import load_iris_data, get_feature_names
-from model import IrisClassifier
-from utils import plot_confusion_matrix, plot_feature_importance
 
 def main():
     print("Starting Iris Classifier Training...")
@@ -47,6 +50,7 @@ def main():
     print("Training completed successfully!")
     print("Model saved to: models/iris_classifier.pkl")
     print("Plots saved: confusion_matrix.png, feature_importance.png")
+
 
 if __name__ == "__main__":
     main()
